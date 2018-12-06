@@ -1,6 +1,6 @@
 #!/bin/bash
-MONERO_URL=https://github.com/monero-project/monero.git
-MONERO_BRANCH=master
+MONERO_URL=https://github.com/freehavenprotocol/swap_rebase_beta.git
+MONERO_BRANCH=swap-v1.0
 
 pushd $(pwd)
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -8,40 +8,41 @@ ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $ROOT_DIR/utils.sh
 
 INSTALL_DIR=$ROOT_DIR/wallet
-MONERO_DIR=$ROOT_DIR/monero
+MONERO_DIR=$ROOT_DIR/swap
 BUILD_LIBWALLET=false
 
 # init and update monero submodule
 if [ ! -d $MONERO_DIR/src ]; then
-    git submodule init monero
+    git submodule init swap
 fi
 git submodule update --remote
 git -C $MONERO_DIR fetch
-git -C $MONERO_DIR checkout master
+git -C $MONERO_DIR checkout origin/swap-v1.0
 
 # get monero core tag
 pushd $MONERO_DIR
 get_tag
 popd
 # create local monero branch
-git -C $MONERO_DIR checkout -B $VERSIONTAG
+#git -C $MONERO_DIR checkout -B origin/swap-v1.0
+#$VERSIONTAG
 
 # Merge monero PR dependencies
 
 # Workaround for git username requirements
 # Save current user settings and revert back when we are done with merging PR's
-OLD_GIT_USER=$(git -C $MONERO_DIR config --local user.name)
-OLD_GIT_EMAIL=$(git -C $MONERO_DIR config --local user.email)
-git -C $MONERO_DIR config user.name "Monero GUI"
-git -C $MONERO_DIR config user.email "gui@monero.local"
+#OLD_GIT_USER=$(git -C $MONERO_DIR config --local user.name)
+#OLD_GIT_EMAIL=$(git -C $MONERO_DIR config --local user.email)
+#git -C $MONERO_DIR config user.name "Monero GUI"
+#git -C $MONERO_DIR config user.email "gui@monero.local"
 # check for PR requirements in most recent commit message (i.e requires #xxxx)
-for PR in $(git log --format=%B -n 1 | grep -io "requires #[0-9]*" | sed 's/[^0-9]*//g'); do
-    echo "Merging monero push request #$PR"
-    # fetch pull request and merge
-    git -C $MONERO_DIR fetch origin pull/$PR/head:PR-$PR
-    git -C $MONERO_DIR merge --quiet PR-$PR  -m "Merge monero PR #$PR"
-    BUILD_LIBWALLET=true
-done
+#for PR in $(git log --format=%B -n 1 | grep -io "requires #[0-9]*" | sed 's/[^0-9]*//g'); do
+#    echo "Merging monero push request #$PR"
+#    # fetch pull request and merge
+#    git -C $MONERO_DIR fetch origin pull/$PR/head:PR-$PR
+#    git -C $MONERO_DIR merge --quiet PR-$PR  -m "Merge monero PR #$PR"
+#    BUILD_LIBWALLET=true
+#done
 
 # revert back to old git config
 $(git -C $MONERO_DIR config user.name "$OLD_GIT_USER")

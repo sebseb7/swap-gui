@@ -7,7 +7,7 @@ TEMPLATE = app
 
 QT += qml quick widgets
 
-WALLET_ROOT=$$PWD/monero
+WALLET_ROOT=$$PWD/swap
 
 CONFIG += c++11 link_pkgconfig
 packagesExist(hidapi-libusb) {
@@ -455,7 +455,7 @@ OTHER_FILES += \
 
 DISTFILES += \
     notes.txt \
-    monero/src/wallet/CMakeLists.txt \
+    swap/src/wallet/CMakeLists.txt \
     components/MobileHeader.qml
 
 
